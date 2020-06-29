@@ -1,0 +1,4 @@
+---
+# vars file for bps
+single_jvm_name: "{% if jvm in urlinfo.keys() %}{{ jvm }}{% else %}unknown{% endif %}"
+multi_jvm_list: "{% set valid_jvm_list = [] %}{% for jvmkey in urlinfo.keys() %}{% set grouptocheck = 'app_' + jvmkey|lower %}{% if inventory_hostname in groups[grouptocheck]|default([]) %}{{ valid_jvm_list.append(jvmkey) }}{% endif %}{% endfor %}{{ valid_jvm_list }}"

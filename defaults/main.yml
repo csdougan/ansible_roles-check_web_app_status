@@ -1,0 +1,16 @@
+---
+# defaults file for bps
+jvm: nothing_selected 
+delegate_to_host: omit
+url_host: "127.0.0.1"
+urlinfo:
+  example_jvm_one:
+    protocol: https
+    path: /somepath
+    port: 1234
+    status_code: 200
+  example_jvm_two:
+    protocol: https
+    path: /somepath_two
+    port: 2345
+    status_code: 200

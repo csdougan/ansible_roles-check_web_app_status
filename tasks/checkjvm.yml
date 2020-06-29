@@ -1,0 +1,26 @@
+---
+- debug:
+    var: jvm_name
+- set_fact:
+    url_port: "{% if jvm_name in urlinfo.keys() %}{{ urlinfo[jvm_name]['port']|default('99999') }}{% else %}99999{% endif %}"
+    url_path: "{% if jvm_name in urlinfo.keys() %}{{ urlinfo[jvm_name]['path']|default('/nothinghere') }}{% else %}/nothinghere{% endif %}"
+    url_status_code: "{% if jvm_name in urlinfo.keys() %}{{ urlinfo[jvm_name]['status_code']|default('200') }}{% else %}200{% endif %}"
+    url_protocol: "{% if jvm_name in urlinfo.keys() %}{{ urlinfo[jvm_name]['protocol']|default('http') }}{% else %}http{% endif %}"
+
+- name: "Attempt to reach App URL for {{ jvm_name }}"
+  uri:
+    url: "{{ url_protocol }}://{{ url_host }}:{{ url_port }}{{ url_path }}"
+    timeout: 5
+    validate_certs: False
+  failed_when: false
+  register: jvm_status_code_check
+
+- debug:
+    msg: "status code : {{ jvm_status_code_check.status|int }}    expected: {{ url_status_code|int }}"
+
+- name: "Check Status code of {{ jvm_name }}"
+  assert:
+    that: "jvm_status_code_check.status|int == url_status_code|int"
+    success_msg: "{{ jvm_name }} on {{ inventory_hostname }} appears to be working"
+    fail_msg: "{{ jvm_name }} on {{ inventory_hostname }} doesn't appear to be running"
+  ignore_errors: true

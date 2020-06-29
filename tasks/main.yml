@@ -1,0 +1,16 @@
+---
+ - debug:
+     var: jvm
+
+ - name: "Check specific JVM on host - {{ single_jvm_name }}"
+   include: checkjvm.yml
+   vars:
+     jvm_name: "{{ single_jvm_name }}"
+   when: jvm != 'all' and jvm != 'nothing_selected'
+
+ - name: Check all JVMs on host
+   include: checkjvm.yml
+   vars:
+     jvm_name: "{{ item }}"
+   with_items: "{{ multi_jvm_list }}"
+   when: jvm == 'all'
